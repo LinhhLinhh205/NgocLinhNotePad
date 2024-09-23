@@ -7,16 +7,9 @@
  *
  * @author PC
  */
+import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
 //import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +18,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -34,6 +29,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
@@ -56,17 +52,25 @@ public class JNotePad extends JFrame {
     private JTextArea txtArea;
     private UndoManager undomanage;
     private int size = 20;
+    private JToolBar toolbar;
+    private JButton btnNew, btnOpen, btnSave;
 
     public JNotePad(String title) {
         setTitle(title);
         createMenu();
         createGui();
+        createToolbar();
         processEvent();
         undomanage = new UndoManager();
         setSize(600, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
     }
+
+    public JTextArea getTxtArea() {
+        return txtArea;
+    }
+    
 
     private void createMenu() {
         menuBar = new JMenuBar();
@@ -139,11 +143,6 @@ public class JNotePad extends JFrame {
         setJMenuBar(menuBar);
     }
 
-    public static void main(String[] args) {
-        JNotePad a = new JNotePad("Demo JNodePad");
-        a.setVisible(true);
-    }
-
     private void createGui() {
         txtArea = new JTextArea();
         JScrollPane scroll = new JScrollPane(txtArea);
@@ -154,115 +153,67 @@ public class JNotePad extends JFrame {
     }
 
     private void processEvent() {
-        iexit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (JOptionPane.showConfirmDialog(null, "Do you want exit to Notepad?") == JOptionPane.YES_OPTION) {
-                    System.exit(0);
-                }
+        iexit.addActionListener((e) -> {
+            if (JOptionPane.showConfirmDialog(null, "Do you want exit to Notepad?") == JOptionPane.YES_OPTION) {
+                System.exit(0);
             }
         });
-        isave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveFile();
-            }
-
+        isave.addActionListener((e) -> {
+            saveFile();
         });
-        isaveas.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveasfile();
-            }
-
+        isaveas.addActionListener((e) -> {
+            saveasfile();
         });
 
-        iopen.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openfile();
+        iopen.addActionListener((e) -> {
+            openfile();
+        });
+        iWrap.addItemListener((e) -> {
+            if (iWrap.isSelected()) {
+                txtArea.setLineWrap(true);
+            } else {
+                txtArea.setLineWrap(false);
             }
         });
-        iWrap.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (iWrap.isSelected()) {
-                    txtArea.setLineWrap(true);
-                } else {
-                    txtArea.setLineWrap(false);
-                }
-            }
+        inew.addActionListener((e) -> {
+            newfile();
         });
-        inew.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                newfile();
-            }
-
+        icopy.addActionListener((e) -> {
+            txtArea.copy();
         });
-        icopy.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                txtArea.copy();
-            }
-
+        icut.addActionListener((e) -> {
+            txtArea.cut();
         });
-        icut.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                txtArea.cut();
-            }
+        ipaste.addActionListener((e) -> {
+            txtArea.paste();
         });
-        ipaste.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                txtArea.paste();
-            }
-
+        itime.addActionListener((e) -> {
+            timefile();
         });
-        itime.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                timefile();
-            }
-
+        idelete.addActionListener((e) -> {
+            deletefile();
         });
-        idelete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deletefile();
-            }
-
+        iundo.addActionListener((e) -> {
+            undofile();
         });
-        iundo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                undofile();
-            }
-
+        izoomin.addActionListener((e) -> {
+            size += 4;
+            txtArea.setFont(new Font("Arial", Font.PLAIN, size));
         });
-        izoomin.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                size += 4;
-                txtArea.setFont(new Font("Arial", Font.PLAIN, size));
-            }
+        izoomout.addActionListener((e) -> {
+            size -= 4;
+            txtArea.setFont(new Font("Arial", Font.PLAIN, size));
         });
-        izoomout.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                size -= 4;
-                txtArea.setFont(new Font("Arial", Font.PLAIN, size));
-            }
+        iretore.addActionListener((e) -> {
+            size = 20;
+            txtArea.setFont(new Font("Arial", Font.PLAIN, size));
         });
-        iretore.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                size = 20;
-                txtArea.setFont(new Font("Arial", Font.PLAIN, size));
-            }
+        ifont.addActionListener((e) -> {
+            JNoteDialog fontDialog = new JNoteDialog(this, true);
+            fontDialog.setVisible(true);
         });
-    }
+        
+    };
 
     private void saveFile() {
         if (currentfile == null) {
@@ -331,7 +282,7 @@ public class JNotePad extends JFrame {
     }
 
     private void deletefile() {
-        if (txtArea.getSelectedText() != null) {           
+        if (txtArea.getSelectedText() != null) {
             int start = txtArea.getSelectionStart();
             int end = txtArea.getSelectionEnd();
             txtArea.replaceRange("", start, end);
@@ -351,6 +302,37 @@ public class JNotePad extends JFrame {
             JOptionPane.showMessageDialog(this, "Không có gì để hoàn tác.");
         }
 
+    }
+
+    private void createToolbar() {
+        toolbar = new JToolBar();
+        toolbar.add(new JButton("New") {
+            {
+                setIcon(new ImageIcon(getClass().getResource("/folder.png")));
+            }
+        });
+        toolbar.add(new JButton("Open") {
+            {
+                setIcon(new ImageIcon(getClass().getResource("/plus.png")));
+            }
+        });
+        toolbar.add(new JButton("Save") {
+            {
+                setIcon(new ImageIcon(getClass().getResource("/savings.png")));
+            }
+        });
+        add(toolbar, BorderLayout.NORTH);
+//        btnNew.addItemListener((e)->{
+//            openfile();
+//        });
+//        btnOpen.addItemListener((e)->{
+//            openfile();
+//        });
+//        btnSave.addItemListener((e)->{
+//            saveFile();
+//        });
+        
+        
     }
 
 }
