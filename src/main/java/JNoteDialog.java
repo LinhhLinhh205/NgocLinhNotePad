@@ -2,6 +2,8 @@
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -54,8 +56,8 @@ public class JNoteDialog extends JDialog {
         listFontName.setSelectedIndex(0);
 
         p.add(scrollFontName);
-        scrollFontName.setBounds(5, 50, 200, 200);
-        lbfont.setBounds(5, 25, 50, 30);
+        scrollFontName.setBounds(5, 40, 200, 200);
+        lbfont.setBounds(5, 15, 50, 30);
 
         String[] styles = {"Plain", "Italic", "Bold", "Italic Bold"};
         listStyle = new JList(styles);
@@ -63,8 +65,8 @@ public class JNoteDialog extends JDialog {
         listStyle.setSelectedIndex(1);
 
         p.add(scrollStyle);
-        scrollStyle.setBounds(225, 50, 200, 200);
-        lbstyle.setBounds(225, 25, 100, 30);
+        scrollStyle.setBounds(225, 40, 200, 200);
+        lbstyle.setBounds(225, 15, 100, 30);
 
         String[] size = {"8", "9", "10", "11", "12", "14", "16", "22", "24", "32", "48", "72"};
         listSize = new JList(size);
@@ -72,17 +74,22 @@ public class JNoteDialog extends JDialog {
         listSize.setSelectedIndex(9);
 
         p.add(scrollSize);
-        scrollSize.setBounds(445, 50, 100, 200);
-        lbsize.setBounds(445, 15, 50, 50);
-
-        p.add(lbPreview = new JLabel("AaBbYyZz"));
-        lbPreview.setBounds(350, 250, 400, 100);
+        scrollSize.setBounds(445, 40, 100, 200);
+        lbsize.setBounds(445, 5, 50, 50);
+        
+        JPanel sample=new JPanel();
+        sample.setLayout(new GridLayout(1,2));
+        sample.setBounds(250, 270, 300, 80);
+        sample.setBorder(BorderFactory.createTitledBorder("Sample"));
+        
+        sample.add(lbPreview = new JLabel("AaBbYyZz"));
+        lbPreview.setBounds(350, 280, 200, 70);
 
         p.add(btOk = new JButton("OK"));
         p.add(btCancel = new JButton("Cancel"));
-        btOk.setBounds(300, 350, 100, 30);
-        btCancel.setBounds(430, 350, 100, 30);
-
+        btOk.setBounds(330, 370, 100, 30);
+        btCancel.setBounds(440, 370, 100, 30);
+        p.add(sample);
         add(p);
 
     }

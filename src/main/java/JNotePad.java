@@ -306,32 +306,23 @@ public class JNotePad extends JFrame {
 
     private void createToolbar() {
         toolbar = new JToolBar();
-        toolbar.add(new JButton("New") {
-            {
-                setIcon(new ImageIcon(getClass().getResource("/folder.png")));
-            }
+        toolbar.add(btnNew=new JButton("New"));
+        toolbar.add(btnOpen=new JButton("Open"));
+        toolbar.add(btnSave=new JButton("Save"));
+        
+        btnNew.setIcon(new ImageIcon(this.getClass().getResource("/plus.png")));
+        btnOpen.setIcon(new ImageIcon(this.getClass().getResource("/folder.png")));
+        btnSave.setIcon(new ImageIcon(this.getClass().getResource("/savings.png")));
+        btnNew.addActionListener((e)->{
+            newfile();
         });
-        toolbar.add(new JButton("Open") {
-            {
-                setIcon(new ImageIcon(getClass().getResource("/plus.png")));
-            }
+        btnOpen.addActionListener((e)->{
+            openfile();
         });
-        toolbar.add(new JButton("Save") {
-            {
-                setIcon(new ImageIcon(getClass().getResource("/savings.png")));
-            }
+        btnSave.addActionListener((e)->{
+            saveFile();
         });
         add(toolbar, BorderLayout.NORTH);
-//        btnNew.addItemListener((e)->{
-//            openfile();
-//        });
-//        btnOpen.addItemListener((e)->{
-//            openfile();
-//        });
-//        btnSave.addItemListener((e)->{
-//            saveFile();
-//        });
-        
         
     }
 
